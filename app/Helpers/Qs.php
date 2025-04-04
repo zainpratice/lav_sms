@@ -258,9 +258,10 @@ class Qs
 
     public static function getSetting($type)
     {
-        return Setting::where('type', $type)->first()->description;
-    }
+    	$setting = Setting::where('type', $type)->first();
 
+    	return $setting ? $setting->description : 'school management system';
+    }
     public static function getCurrentSession()
     {
         return self::getSetting('current_session');
