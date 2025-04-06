@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          submodules: true  # This ensures that submodules are checked out too
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
@@ -21,10 +23,11 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '16.x'
+          node-version: '16.x'  # You can change this version based on your requirements
 
       - name: Initialize and update git submodules
-        run: git submodule update --init --recursive || echo "No submodules to update"
+        run: |
+          git submodule update --init --recursive || echo "No submodules to update"
 
       - name: Install dependencies
         run: |
@@ -33,18 +36,8 @@ jobs:
           
           # Install PHP dependencies
           composer install --no-interaction --prefer-dist --optimize-autoloader
-
           # Install Node.js dependencies
           npm install
-
-      - name: Fix file permissions and create .env
-        run: |
-          if [ ! -f .env ]; then
-            cp .env.example .env
-          fi
-          sudo chmod -R 775 storage bootstrap/cache
-          sudo chown -R $USER:$USER storage bootstrap/cache
-          sudo chmod 664 .env
 
       - name: Run tests
         run: |
@@ -58,7 +51,7 @@ jobs:
         run: |
           # Add deployment steps here (e.g., SSH to your server and deploy)
           echo "Deployment steps go here."
-          
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
