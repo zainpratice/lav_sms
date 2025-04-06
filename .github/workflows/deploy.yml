@@ -21,7 +21,10 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '16.x'  # Updated Node.js version to 16.x for better compatibility
+          node-version: '16.x'
+
+      - name: Initialize and update git submodules
+        run: git submodule update --init --recursive
 
       - name: Install dependencies
         run: |
@@ -34,8 +37,11 @@ jobs:
           # Install Node.js dependencies
           npm install
 
-      - name: Fix file permissions
+      - name: Fix file permissions and create .env
         run: |
+          if [ ! -f .env ]; then
+            cp .env.example .env
+          fi
           sudo chmod -R 775 storage bootstrap/cache
           sudo chown -R $USER:$USER storage bootstrap/cache
           sudo chmod 664 .env
