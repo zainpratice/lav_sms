@@ -37,34 +37,39 @@ jobs:
       - name: Build assets
         run: npm run production
 
-  deploy:  # ← New job for deployment
-    needs: build  # ← Ensures build runs first
+  deploy:
+    needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
       - name: Deploy to Server
-        uses: appleboy/ssh-action@v1
+        uses: appleboy/ssh-action@v1.0.0
         with:
-          host: ${{ secrets.PR0D_SERVER_IP }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
           script: |
-            cd /var/www/lav_sms
             echo "🔄 Pulling latest code"
+            cd /var/www/lav_sms
             git pull origin main
+
             echo "🎯 Installing backend dependencies"
             composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
+
             echo "📦 Installing Node.js dependencies"
             npm install --legacy-peer-deps
+
             echo "⚙️ Building frontend assets"
             npm run production
+
             echo "🔐 Setting Laravel app key"
             php artisan key:generate --force
+
             echo "📂 Clearing and caching Laravel config"
             php artisan config:clear
             php artisan config:cache
+
             echo "🔄 Running migrations"
             php artisan migrate --force
+
             echo "✅ Deployment complete!"
