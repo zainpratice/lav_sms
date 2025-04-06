@@ -24,7 +24,7 @@ jobs:
           node-version: '16.x'
 
       - name: Initialize and update git submodules
-        run: git submodule update --init --recursive
+        run: git submodule update --init --recursive || echo "No submodules to update"
 
       - name: Install dependencies
         run: |
