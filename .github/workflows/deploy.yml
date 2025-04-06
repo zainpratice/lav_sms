@@ -21,7 +21,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14.x'  # You can change this version to 16.x or 18.x depending on your app requirements.
+          node-version: '16.x'  # Updated Node.js version to 16.x for better compatibility
 
       - name: Install dependencies
         run: |
@@ -34,9 +34,15 @@ jobs:
           # Install Node.js dependencies
           npm install
 
+      - name: Fix file permissions
+        run: |
+          sudo chmod -R 775 storage bootstrap/cache
+          sudo chown -R $USER:$USER storage bootstrap/cache
+          sudo chmod 664 .env
+
       - name: Run tests
         run: |
-          # Run PHPUnit tests (you can add more tests as needed)
+          # Run PHPUnit tests
           ./vendor/bin/phpunit
 
       - name: Build production assets
@@ -46,7 +52,7 @@ jobs:
         run: |
           # Add deployment steps here (e.g., SSH to your server and deploy)
           echo "Deployment steps go here."
-
+          
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -57,4 +63,3 @@ jobs:
           # Example SSH deploy command
           echo "Deploying to production server"
           ssh user@your-server-ip 'cd /path/to/your/app && git pull && php artisan migrate && npm install && npm run prod'
-
