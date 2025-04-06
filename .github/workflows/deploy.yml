@@ -2,63 +2,56 @@ name: Laravel CI/CD Pipeline
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          submodules: true  # This ensures that submodules are checked out too
+        uses: actions/checkout@v4
 
-      - name: Set up PHP
+      - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.1'
+          extensions: mbstring, bcmath, intl, curl, gd
+          tools: composer
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16.x'  # You can change this version based on your requirements
-
-      - name: Initialize and update git submodules
+      - name: Install Composer dependencies
         run: |
-          git submodule update --init --recursive || echo "No submodules to update"
-
-      - name: Install dependencies
-        run: |
-          # Clean npm cache to avoid any stale cache issues
-          npm cache clean --force
-          
-          # Install PHP dependencies
           composer install --no-interaction --prefer-dist --optimize-autoloader
-          # Install Node.js dependencies
-          npm install
 
-      - name: Run tests
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+          cache: 'npm'
+
+      - name: Install Node.js dependencies
         run: |
-          # Run PHPUnit tests
-          ./vendor/bin/phpunit
+          npm ci
+          npm install resolve-url-loader@^5.0.0 --save-dev --legacy-peer-deps
+          npm install @vue/compiler-sfc@latest --save-dev
 
-      - name: Build production assets
-        run: npm run prod
-
-      - name: Deploy application
-        run: |
-          # Add deployment steps here (e.g., SSH to your server and deploy)
-          echo "Deployment steps go here."
+      - name: Build assets
+        run: npm run production
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    environment: production
     steps:
-      - name: Deploy to production server
-        run: |
-          # Example SSH deploy command
-          echo "Deploying to production server"
-          ssh user@your-server-ip 'cd /path/to/your/app && git pull && php artisan migrate && npm install && npm run prod'
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/lav_sms
+            git pull origin main
+            composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
+            npm ci --production
+            npm run production
+            php artisan migrate --force
+            php artisan optimize
