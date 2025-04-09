@@ -15,14 +15,14 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Full Name: <span class="text-danger">*</span></label>
+                                <label>Full Name:</label>
                                 <input value="{{ old('name') }}" required type="text" name="name" placeholder="Full Name" class="form-control">
                                 </div>
                             </div>
 
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Address: <span class="text-danger">*</span></label>
+                                <label>Address:</label>
                                 <input value="{{ old('address') }}" class="form-control" placeholder="Address" name="address" type="text" required>
                             </div>
                         </div>
@@ -31,14 +31,14 @@
                     <div class="row">
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label>Email address: </label>
+                                <label>Email address:</label>
                                 <input type="email" value="{{ old('email') }}" name="email" class="form-control" placeholder="Email Address">
                             </div>
                         </div>
 
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="gender">Gender: <span class="text-danger">*</span></label>
+                                <label for="gender">Gender:</label>
                                 <select class="select form-control" id="gender" name="gender" required data-fouc data-placeholder="Choose..">
                                     <option value=""></option>
                                     <option {{ (old('gender') == 'Male') ? 'selected' : '' }} value="Male">Male</option>
@@ -73,40 +73,39 @@
                         </div>
 
                         <div class="col-md-3">
-                    <div class="form-group">
-                             <label for="nal_id">Nationality:</label>
-                        <select data-placeholder="Choose..." name="nal_id" id="nal_id" class="select-search form-control">
-                             <option value=""></option>
-                             @foreach($nationals as $nal)
-                             <option {{ (old('nal_id') == $nal->id ? 'selected' : '') }} value="{{ $nal->id }}">{{ $nal->name }}</option>
-                             @endforeach
-                        </select>
+                            <div class="form-group">
+                                <label for="nal_id">Nationality: <span class="text-danger">*</span></label>
+                                <select data-placeholder="Choose..." required name="nal_id" id="nal_id" class="select-search form-control">
+                                    <option value=""></option>
+                                    @foreach($nationals as $nal)
+                                        <option {{ (old('nal_id') == $nal->id ? 'selected' : '') }} value="{{ $nal->id }}">{{ $nal->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
-                    </div>
 
                         <div class="col-md-3">
-                             <label for="state_id">State:</label>
-                            <select onchange="getLGA(this.value)" data-placeholder="Choose.." class="select-search form-control" name="state_id" id="state_id">
+                            <label for="state_id">State: <span class="text-danger">*</span></label>
+                            <select onchange="getLGA(this.value)" required data-placeholder="Choose.." class="select-search form-control" name="state_id" id="state_id">
                                 <option value=""></option>
-                             @foreach($states as $st)
-                                 <option {{ (old('state_id') == $st->id ? 'selected' : '') }} value="{{ $st->id }}">{{ $st->name }}</option>
-                             @endforeach
-                         </select>
-                    </div>
+                                @foreach($states as $st)
+                                    <option {{ (old('state_id') == $st->id ? 'selected' : '') }} value="{{ $st->id }}">{{ $st->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
 
-<div class="col-md-3">
-    <label for="lga_id">LGA:</label>
-    <select data-placeholder="Select State First" class="select-search form-control" name="lga_id" id="lga_id">
-        <option value=""></option>
-    </select>
-</div>
-
+                        <div class="col-md-3">
+                            <label for="lga_id">LGA: <span class="text-danger">*</span></label>
+                            <select required data-placeholder="Select State First" class="select-search form-control" name="lga_id" id="lga_id">
+                                <option value=""></option>
+                            </select>
+                        </div>
                     </div>
                     <div class="row">
 
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="bg_id">Blood Group: </label>
+                                <label for="bg_id">Blood Group:</label>
                                 <select class="select form-control" id="bg_id" name="bg_id" data-fouc data-placeholder="Choose..">
                                     <option value=""></option>
                                     @foreach(App\Models\BloodGroup::all() as $bg)
@@ -132,7 +131,7 @@
                     <div class="row">
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="my_class_id">Class: <span class="text-danger">*</span></label>
+                                <label for="my_class_id">Class:</label>
                                 <select onchange="getClassSections(this.value)" data-placeholder="Choose..." required name="my_class_id" id="my_class_id" class="select-search form-control">
                                     <option value=""></option>
                                     @foreach($my_classes as $c)
@@ -144,7 +143,7 @@
 
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="section_id">Section: <span class="text-danger">*</span></label>
+                                <label for="section_id">Section:</label>
                                 <select data-placeholder="Select Class First" required name="section_id" id="section_id" class="select-search form-control">
                                     <option {{ (old('section_id')) ? 'selected' : '' }} value="{{ old('section_id') }}">{{ (old('section_id')) ? 'Selected' : '' }}</option>
                                 </select>
@@ -153,7 +152,7 @@
 
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="my_parent_id">Parent: </label>
+                                <label for="my_parent_id">Parent:</label>
                                 <select data-placeholder="Choose..."  name="my_parent_id" id="my_parent_id" class="select-search form-control">
                                     <option  value=""></option>
                                     @foreach($parents as $p)
@@ -165,7 +164,7 @@
 
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="year_admitted">Year Admitted: <span class="text-danger">*</span></label>
+                                <label for="year_admitted">Year Admitted:</label>
                                 <select data-placeholder="Choose..." required name="year_admitted" id="year_admitted" class="select-search form-control">
                                     <option value=""></option>
                                     @for($y=date('Y', strtotime('- 10 years')); $y<=date('Y'); $y++)
@@ -178,7 +177,7 @@
 
                     <div class="row">
                         <div class="col-md-3">
-                            <label for="dorm_id">Dormitory: </label>
+                            <label for="dorm_id">Dormitory:</label>
                             <select data-placeholder="Choose..."  name="dorm_id" id="dorm_id" class="select-search form-control">
                                 <option value=""></option>
                                 @foreach($dorms as $d)
