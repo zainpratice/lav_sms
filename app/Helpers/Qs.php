@@ -17,11 +17,11 @@ class Qs
         }
         return '
                 <div class="alert alert-danger alert-styled-left alert-dismissible">
-									<button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
-									<span class="font-weight-semibold">Oops!</span> '.
+                    <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
+                    <span class="font-weight-semibold">Oops!</span> '.
         implode(' ', $data).'
-							    </div>
-                ';
+                </div>
+        ';
     }
 
     public static function getAppCode()
@@ -258,7 +258,11 @@ class Qs
 
     public static function getSetting($type)
     {
-        return Setting::where('type', $type)->first()->description;
+        // Retrieve the setting based on the 'type' and check for null
+        $setting = Setting::where('type', $type)->first();
+
+        // Return the description if found, else return null
+        return $setting ? $setting->description : null;
     }
 
     public static function getCurrentSession()

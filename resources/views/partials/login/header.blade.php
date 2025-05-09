@@ -2,7 +2,10 @@
 <div class="navbar navbar-expand-md navbar-dark">
     <div class="mt-2 mr-5">
         <a href="{{ route('dashboard') }}" class="d-inline-block">
-            <h4 class="text-bold text-white">{{ Qs::getSystemName() }}</h4>
+            <h4 class="text-bold text-white">
+                {{-- Check if $object is set and has the description property, otherwise fallback to default system name --}}
+                {{ isset($object) && isset($object->description) ? $object->description : (Qs::getSystemName() ?? config('app.name', 'Default System Name')) }}
+            </h4>
         </a>
     </div>
 

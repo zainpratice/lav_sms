@@ -1,0 +1,57 @@
+services:
+  app:
+    build: .  # Use the Dockerfile
+    container_name: lav_sms_app
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+    networks:
+      - lav_sms_network
+
+  nginx:
+    image: nginx:alpine
+    container_name: lav_sms_nginx
+    ports:
+      - "8000:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - .:/var/www/html
+    depends_on:
+      - app
+    networks:
+      - lav_sms_network
+
+  mysql:
+    image: mysql:5.7
+    container_name: lav_sms_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: lav_sms
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql  # Persistent storage
+    networks:
+      - lav_sms_network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: lav_sms_phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+    networks:
+      - lav_sms_network
+
+networks:
+  lav_sms_network:
+    driver: bridge
+
+volumes:
+  mysql_data:
